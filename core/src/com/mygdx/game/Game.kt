@@ -17,9 +17,9 @@ class Game : KtxGame<Screen>() {
         //Initialize assetManager (load assets)
         Assets
 
-        addScreen(GameScreen())
+        addScreen(RecorderScreen(this))
 
-        setScreen<GameScreen>()
+        setScreen<RecorderScreen>()
     }
 
 
