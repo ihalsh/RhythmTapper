@@ -18,8 +18,9 @@ class Game : KtxGame<Screen>() {
         Assets
 
         addScreen(RecorderScreen(this))
+        addScreen(RhythmScreen())
 
-        setScreen<RecorderScreen>()
+        setScreen<RhythmScreen>()
     }
 
 

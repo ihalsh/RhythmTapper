@@ -9,7 +9,9 @@ import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.NinePatch
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader
 import com.badlogic.gdx.scenes.scene2d.ui.Label
@@ -30,18 +32,30 @@ object Assets : Disposable, AssetErrorListener {
         val startTime = TimeUtils.millis()
         with(assetManager) {
             //            logger = com.badlogic.gdx.utils.Logger("AssetManager", com.badlogic.gdx.Application.LOG_INFO)
-//            load("turtle-1.png", Texture::class.java)
 //            load("whirlpool.png", Pixmap::class.java)
 //            load("Water_Drop.ogg", Sound::class.java)
 //            load("Master_of_the_Feast.ogg", Music::class.java)
             load("OpenSans.ttf", FreeTypeFontGenerator::class.java)
             load("button.png", Texture::class.java)
+            load("box.png", Texture::class.java)
+            load("space.png", Texture::class.java)
             finishLoading()
         }
         info { "Assets loading time: ${TimeUtils.timeSinceMillis(startTime)} milliseconds" }
     }
 
     private val ktxLogger = ktx.log.logger<Assets>()
+
+    //Single Texture Animation
+    val boxAnimation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("box.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
+
+    val spaceAnimation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("space.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
 
     //Label style
     private val customFont = assetManager.get<FreeTypeFontGenerator>("OpenSans.ttf")
