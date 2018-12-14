@@ -39,6 +39,11 @@ object Assets : Disposable, AssetErrorListener {
             load("button.png", Texture::class.java)
             load("box.png", Texture::class.java)
             load("space.png", Texture::class.java)
+            load("perfect.png", Texture::class.java)
+            load("great.png", Texture::class.java)
+            load("good.png", Texture::class.java)
+            load("almost.png", Texture::class.java)
+            load("miss.png", Texture::class.java)
             finishLoading()
         }
         info { "Assets loading time: ${TimeUtils.timeSinceMillis(startTime)} milliseconds" }
@@ -54,6 +59,26 @@ object Assets : Disposable, AssetErrorListener {
 
     val spaceAnimation: Animation<TextureRegion> by lazy {
         Animation(1f, TextureRegion(assetManager.get<Texture>("space.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
+    val perfectAnimation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("perfect.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
+    val greatAnimation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("great.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
+    val goodAnimation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("good.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
+    val almostAnimation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("almost.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
+    val missAnimation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("miss.png")))
                 .apply { playMode = Animation.PlayMode.LOOP }
     }
 

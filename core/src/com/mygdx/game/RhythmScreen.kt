@@ -1,19 +1,28 @@
 package com.mygdx.game
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Color.*
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.utils.Align
 import com.mygdx.game.Actors.BaseActor
 import com.mygdx.game.Actors.BaseActor.Companion.setWorldBounds
 import com.mygdx.game.Actors.FallingBox
+import com.mygdx.game.Actors.Message
 import com.mygdx.game.Actors.TargetBox
 import com.mygdx.game.Data.SongData
 import com.mygdx.game.Utils.Assets
+import com.mygdx.game.Utils.Assets.almostAnimation
+import com.mygdx.game.Utils.Assets.goodAnimation
+import com.mygdx.game.Utils.Assets.greatAnimation
+import com.mygdx.game.Utils.Assets.missAnimation
+import com.mygdx.game.Utils.Assets.perfectAnimation
 import com.mygdx.game.Utils.Assets.spaceAnimation
 import com.mygdx.game.Utils.FileUtils.isTouchDownEvent
 import ktx.app.KtxInputAdapter
@@ -49,6 +58,15 @@ class RhythmScreen(
     //adds space
     private val ocean = BaseActor(0f, 0f, mainStage, animation = spaceAnimation)
             .apply { setSize(800f, 600f) }
+
+    private val message = Message(0f, 0f, uiStage).apply { setOpacity(0f) }
+    private val scoreLabel = Label("Score: 0\nMax: 0", Assets.labelStyle)
+            .apply { setAlignment(Align.right) }
+    private var score = 0
+    private var maxScore = 0
+    private val timeLabel = Label("Time: 0\nEnd: 0", Assets.labelStyle)
+            .apply { setAlignment(Align.right) }
+    private var songDuration = 0f
 
     override fun show() {
         //Handle input from everywhere
@@ -87,15 +105,69 @@ class RhythmScreen(
                     resetIndex()
                     val songFileHandle = Gdx.files.internal(this.songName)
                     gameMusic = Gdx.audio.newMusic(songFileHandle)
+                    score = 0
+                    maxScore = 100 * keyTimeCount()
+                    scoreLabel.setText("Score: $score\n Max: $maxScore")
+                    timeLabel.setText("Time: 0\n End: ${songDuration.toInt()}")
                 }
                 isVisible = false
                 true
             }
-            uiTable.add(this)
+        }
+
+        //Position interface elements
+        with(uiTable) {
+            pad(10f)
+            add(startButton).width(200f).left()
+            add(timeLabel).width(150f)
+            add(scoreLabel).width(200f).right()
+            row()
+            uiTable.add(message).colspan(3).expandX().expandY()
         }
     }
 
-    override fun keyDown(keyCode: Int): Boolean {
+    override fun keyDown(keycode: Int): Boolean {
+        if (songData == null)
+            return false
+
+        val keyString = Input.Keys.toString(keycode)
+        if (keyList.contains(keyString)) {
+            val i = keyList.indexOf(keyString)
+            val tb = targetList[i]
+            val fallingList = fallingLists[i]
+            if (fallingList.size == 0) {
+                with(message) {
+                    animation = missAnimation
+                    pulseFade()
+                }
+            } else {
+                val fb = fallingList[0]
+                val distance = Math.abs(fb.y - tb.y)
+                when {
+                    distance < 8 -> {
+                        message.animation = perfectAnimation
+                        score += 100
+                    }
+                    distance < 16 -> {
+                        message.animation = greatAnimation
+                        score += 80
+                    }
+                    distance < 24 -> {
+                        message.animation = goodAnimation
+                        score += 50
+                    }
+                    distance < 32 -> {
+                        message.animation = almostAnimation
+                        score += 20
+                    }
+                    else -> message.animation = missAnimation
+                }
+                message.pulseFade()
+                scoreLabel.setText("Score: $score\nMax: $maxScore")
+                fallingList.remove(fb)
+                fb.remove()
+            }
+        }
 
         return false
     }
@@ -126,7 +198,7 @@ class RhythmScreen(
             val key = songData!!.getCurrentKeyTime().key
             val i = keyList.indexOf(key)
 
-            with (FallingBox(targetList[i].x, spawnHeight, mainStage)) {
+            with(FallingBox(targetList[i].x, spawnHeight, mainStage)) {
                 setSpeed(noteSpeed)
                 setMotionAngle(270f)
                 color = colorList[i]
@@ -134,5 +206,27 @@ class RhythmScreen(
             }
             songData!!.advanceIndex()
         }
+
+        if (gameMusic!!.isPlaying)
+            timeLabel.setText("Time: ${gameMusic!!.position.toInt()}\nEnd: ${songDuration.toInt()}")
+
+        //Do if any key is pressed
+        for (i in 0..3) {
+            val key = keyList[i]
+            val fallingList = fallingLists[i]
+            if (fallingList.size > 0) {
+                val fb = fallingList[0]
+                val tb = targetList[i]
+                if (fb.y < tb.y && !fb.overlaps(tb)) {
+                    with(message) {
+                        animation = missAnimation
+                        pulseFade()
+                    }
+                    fallingList.remove(fb)
+                    fb.remove() // remove from stage immediately
+                }
+            }
+        }
+
     }
 }

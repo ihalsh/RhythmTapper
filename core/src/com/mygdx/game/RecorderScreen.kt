@@ -6,9 +6,13 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Color.BLACK
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.utils.Align
+import com.mygdx.game.Actors.Message
 import com.mygdx.game.Data.SongData
+import com.mygdx.game.Utils.Assets.labelStyle
 import com.mygdx.game.Utils.Assets.textButtonStyle
 import com.mygdx.game.Utils.FileUtils
 import com.mygdx.game.Utils.FileUtils.isTouchDownEvent
@@ -17,6 +21,7 @@ import ktx.app.KtxInputAdapter
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.log.info
+
 
 class RecorderScreen(
         private val game: Game,
@@ -31,7 +36,6 @@ class RecorderScreen(
     var songData: SongData = SongData()
     var lastSongPosition: Float = 0f
     var recording: Boolean = false
-
 
     override fun show() {
         //Handle input from everywhere
@@ -49,7 +53,7 @@ class RecorderScreen(
                 if (musicFile != null) {
                     music = Gdx.audio.newMusic(musicFile)
                     songData.songName = musicFile.name()
-                    info { "${songData.songName} added."  }
+                    info { "${songData.songName} added." }
                 }
                 true
             }

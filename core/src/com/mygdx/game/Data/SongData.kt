@@ -1,6 +1,7 @@
 package com.mygdx.game.Data
 
 import com.badlogic.gdx.files.FileHandle
+import ktx.log.info
 import java.lang.Float.*
 
 class SongData(
@@ -43,7 +44,9 @@ class SongData(
         val dataArray = rawData.split("\n".toRegex())
                 .dropLastWhile { it.isEmpty() }.toTypedArray()
         songName = dataArray[0]
+        info { "$songName" }
         songDuration = parseFloat(dataArray[1])
+        info { "$songDuration" }
         keyTimeList.clear()
         for (i in 2 until dataArray.size) {
             val keyTimeData = dataArray[i].split(",".toRegex())
