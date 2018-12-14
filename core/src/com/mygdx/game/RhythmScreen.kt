@@ -28,6 +28,7 @@ import com.mygdx.game.Utils.FileUtils.isTouchDownEvent
 import ktx.app.KtxInputAdapter
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
+import ktx.log.info
 import java.util.*
 
 
@@ -99,6 +100,8 @@ class RhythmScreen(
             addListener {
                 if (!isTouchDownEvent(it)) return@addListener false
 
+                message.displayCountdown()
+
                 val dataFileHandle = Gdx.files.internal("FunkyJunky.key")
                 songData = SongData().apply {
                     readFromFile(dataFileHandle)
@@ -134,6 +137,7 @@ class RhythmScreen(
         if (keyList.contains(keyString)) {
             val i = keyList.indexOf(keyString)
             val tb = targetList[i]
+            tb.pulse() //pulse effect
             val fallingList = fallingLists[i]
             if (fallingList.size == 0) {
                 with(message) {
@@ -164,8 +168,12 @@ class RhythmScreen(
                 }
                 message.pulseFade()
                 scoreLabel.setText("Score: $score\nMax: $maxScore")
-                fallingList.remove(fb)
-                fb.remove()
+                // remove from stage immediately
+                with(fb) {
+                    fallingList.remove(this)
+                    setSpeed(0f)
+                    flashOut()
+                }
             }
         }
 
@@ -205,6 +213,7 @@ class RhythmScreen(
                 fallingLists[i].add(this)
             }
             songData!!.advanceIndex()
+            info { "songData size: ${songData!!.keyTimeList.size}, index: ${songData!!.keyTimeIndex}"}
         }
 
         if (gameMusic!!.isPlaying)
@@ -222,11 +231,18 @@ class RhythmScreen(
                         animation = missAnimation
                         pulseFade()
                     }
-                    fallingList.remove(fb)
-                    fb.remove() // remove from stage immediately
+                    // remove from stage immediately
+                    with(fb) {
+                        fallingList.remove(this)
+                        setSpeed(0f)
+                        flashOut()
+                    }
                 }
             }
         }
-
+        if (songData!!.isFinished() && !gameMusic!!.isPlaying) {
+            message.displayCongratulations()
+            songData = null
+        }
     }
 }

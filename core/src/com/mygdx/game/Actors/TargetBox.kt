@@ -7,6 +7,9 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Align.*
 import com.mygdx.game.Utils.Assets.boxAnimation
 import com.mygdx.game.Utils.Assets.labelStyle
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
+
+
 
 class TargetBox(x: Float,
                 y: Float,
@@ -24,5 +27,12 @@ class TargetBox(x: Float,
         setAlignment(center)
         setColor(color)
         this@TargetBox.addActor(this)
+    }
+
+    fun pulse() {
+        val pulse = Actions.sequence(
+                Actions.scaleTo(1.2f, 1.2f, 0.05f),
+                Actions.scaleTo(1.0f, 1.0f, 0.05f))
+        addAction(pulse)
     }
 }

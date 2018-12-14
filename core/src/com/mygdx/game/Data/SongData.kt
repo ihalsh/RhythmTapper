@@ -7,7 +7,7 @@ import java.lang.Float.*
 class SongData(
         var songName: String = String(),
         var songDuration: Float = 0f,
-        val keyTimeList: ArrayList<KeyTimePair> = ArrayList(),
+        var keyTimeList: ArrayList<KeyTimePair> = ArrayList(),
         var keyTimeIndex: Int = 0
 ) {
 

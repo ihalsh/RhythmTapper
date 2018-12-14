@@ -32,9 +32,6 @@ object Assets : Disposable, AssetErrorListener {
         val startTime = TimeUtils.millis()
         with(assetManager) {
             //            logger = com.badlogic.gdx.utils.Logger("AssetManager", com.badlogic.gdx.Application.LOG_INFO)
-//            load("whirlpool.png", Pixmap::class.java)
-//            load("Water_Drop.ogg", Sound::class.java)
-//            load("Master_of_the_Feast.ogg", Music::class.java)
             load("OpenSans.ttf", FreeTypeFontGenerator::class.java)
             load("button.png", Texture::class.java)
             load("box.png", Texture::class.java)
@@ -44,6 +41,14 @@ object Assets : Disposable, AssetErrorListener {
             load("good.png", Texture::class.java)
             load("almost.png", Texture::class.java)
             load("miss.png", Texture::class.java)
+            load("countdown-3.png", Texture::class.java)
+            load("countdown-2.png", Texture::class.java)
+            load("countdown-1.png", Texture::class.java)
+            load("countdown-go.png", Texture::class.java)
+            load("congratulations.png", Texture::class.java)
+            load("blip.wav", Sound::class.java)
+            load("tone.wav", Sound::class.java)
+
             finishLoading()
         }
         info { "Assets loading time: ${TimeUtils.timeSinceMillis(startTime)} milliseconds" }
@@ -51,7 +56,37 @@ object Assets : Disposable, AssetErrorListener {
 
     private val ktxLogger = ktx.log.logger<Assets>()
 
+    //Music and sound
+    val blipSound: Sound by lazy { assetManager.get<Sound>("blip.wav") }
+    val toneSound: Sound by lazy { assetManager.get<Sound>("tone.wav") }
+
+
     //Single Texture Animation
+    val countdown3Animation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("countdown-3.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
+
+    val countdown2Animation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("countdown-2.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
+
+    val countdown1Animation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("countdown-1.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
+
+    val countdownGoAnimation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("countdown-go.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
+
+    val congratulationsAnimation: Animation<TextureRegion> by lazy {
+        Animation(1f, TextureRegion(assetManager.get<Texture>("congratulations.png")))
+                .apply { playMode = Animation.PlayMode.LOOP }
+    }
+
     val boxAnimation: Animation<TextureRegion> by lazy {
         Animation(1f, TextureRegion(assetManager.get<Texture>("box.png")))
                 .apply { playMode = Animation.PlayMode.LOOP }
